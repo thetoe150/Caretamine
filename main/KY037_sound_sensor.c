@@ -1,3 +1,5 @@
+#include "KY037_sound_sensor.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -118,7 +120,9 @@ float get_silence_offset(adc_continuous_handle_t adc_handle, uint8_t* buf, size_
     return silence_offset;
 }
 
-void app_main(void) {
+void init_KY037_sound_sensor(void) {}
+
+void capture_sound(void* args) {
     setup_adc_DO();
     adc_continuous_handle_t adc_handle = {};
     setup_adc_AO(&adc_handle);
