@@ -15,10 +15,10 @@ static const char* LED_STRIP_TAG = "led_strip_encoder";
               // resolution)
 #define RMT_LED_STRIP_GPIO_NUM 1
 
-#define EXAMPLE_LED_NUMBERS 300
-#define EXAMPLE_CHASE_SPEED_MS 10
+#define LED_NUMBERS 500
+#define CHASE_SPEED_MS 10
 
-static uint8_t led_strip_pixels[EXAMPLE_LED_NUMBERS * 3];
+static uint8_t led_strip_pixels[LED_NUMBERS * 3];
 
 typedef struct {
     rmt_encoder_t base;
@@ -253,9 +253,9 @@ void update_led_strip(void* args) {
     };
     while (1) {
         for (int i = 0; i < 3; i++) {
-            for (int j = i; j < EXAMPLE_LED_NUMBERS; j += 3) {
+            for (int j = i; j < LED_NUMBERS; j += 3) {
                 // Build RGB pixels
-                // hue = j * 360 / EXAMPLE_LED_NUMBERS + start_rgb;
+                // hue = j * 360 / LED_NUMBERS + start_rgb;
                 // hue = 200 + start_rgb;
                 // led_strip_hsv2rgb(hue, 100, 100, &red, &green, &blue);
                 // led_strip_pixels[j * 3 + 0] = green;
@@ -270,12 +270,12 @@ void update_led_strip(void* args) {
             ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
                                          sizeof(led_strip_pixels), &tx_config));
             ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-            // vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+            // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
             // memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
             // ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
             //                              sizeof(led_strip_pixels), &tx_config));
             // ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-            // vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+            // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
         }
         start_rgb += 60;
     }

@@ -1,5 +1,3 @@
-#pragma once
-
 #include <stdint.h>
 
 #include "driver/rmt_encoder.h"
