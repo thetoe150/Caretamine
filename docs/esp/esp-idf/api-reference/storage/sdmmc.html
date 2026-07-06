@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-73KGWFC8DM"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-73KGWFC8DM');
+        </script><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SD/SDIO/MMC Driver - ESP32 -  &mdash; ESP-IDF Programming Guide v5.5.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=a60756f2" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=851bd809" />
+      <link rel="stylesheet" type="text/css" href="../../_static/js/chatbot_widget.css?v=3106ea3a" />
+
+  
+    <link rel="canonical" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/sdmmc.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b394f1f6"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ff8fa330"></script>
+        <script src="https://wavedrom.com/skins/default.js"></script>
+        <script src="https://wavedrom.com/wavedrom.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+
+    
+        
+
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/storage/sdmmc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.LATEST_BRANCH_NAME = 'master';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c2", "esp32c5", "esp32c6", "esp32p4"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v5.5.2';
+        DOCUMENTATION_OPTIONS.LANGUAGE_URL = 'en';
+
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Partitions API" href="partition.html" />
+    <link rel="prev" title="NVS Partition Parser Utility" href="nvs_partition_parse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ESP-IDF Programming Guide
+              <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;" hidden>
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;" hidden>
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Application Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth<sup>®</sup> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peripherals/index.html">Peripherals API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Storage API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fatfs.html">FAT Filesystem Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fatfsgen.html">Generating and Parsing FATFS on Host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mass_mfg.html">Manufacturing Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_flash.html">Non-Volatile Storage Library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_bootloader.html">NVS Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_encryption.html">NVS Encryption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_gen.html">NVS Partition Generator Utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nvs_partition_parse.html">NVS Partition Parser Utility</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">SD/SDIO/MMC Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#protocol-layer-api">Protocol Layer API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="partition.html">Partitions API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiffs.html">SPIFFS Filesystem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vfs.html">Virtual Filesystem Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wear-levelling.html">Wear Levelling API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="storage-security.html">Storage Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig-reference.html">Configuration Options Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/index.html">Security Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration-guides/index.html">Migration Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contributions Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">ESP-IDF Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights and Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">Switch Between Languages</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Storage API</a></li>
+      <li class="breadcrumb-item active">SD/SDIO/MMC Driver</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/espressif/esp-idf/blob/v5.5.2/docs/en/api-reference/storage/sdmmc.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sd-sdio-mmc-driver">
+<h1>SD/SDIO/MMC Driver<a class="headerlink" href="#sd-sdio-mmc-driver" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v5.5.2/esp32/api-reference/storage/sdmmc.html">[中文]</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The SD/SDIO/MMC driver supports SD memory, SDIO cards, and eMMC chips. This is a protocol layer driver (<a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.2/components/sdmmc/include/sdmmc_cmd.h">sdmmc/include/sdmmc_cmd.h</a>) which can work together with:</p>
+<p><ul class="simple">
+<li><p>SDMMC host driver (<a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.2/components/esp_driver_sdmmc/include/driver/sdmmc_host.h">esp_driver_sdmmc/include/driver/sdmmc_host.h</a>), see <a class="reference internal" href="../peripherals/sdmmc_host.html"><span class="doc">SDMMC Host API</span></a> for more details.</p></li>
+<li><p>SDSPI host driver (<a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.2/components/esp_driver_sdspi/include/driver/sdspi_host.h">esp_driver_sdspi/include/driver/sdspi_host.h</a>), see <a class="reference internal" href="../peripherals/sdspi_host.html"><span class="doc">SD SPI Host API</span></a> for more details.</p></li>
+</ul>
+</p>
+<section id="protocol-layer-vs-host-layer">
+<h3>Protocol Layer vs Host Layer<a class="headerlink" href="#protocol-layer-vs-host-layer" title="Permalink to this heading"></a></h3>
+<p>The SDMMC protocol layer described in this document handles the specifics of the SD protocol, such as the card initialization flow and various data transfer command flows. The protocol layer works with the host via the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code> structure. This structure contains pointers to various functions of the host.</p>
+<p>Host layer driver(s) implement the protocol layer driver by supporting these functions:</p>
+<ul class="simple">
+<li><p>Sending commands to slave devices</p></li>
+<li><p>Sending and receiving data</p></li>
+<li><p>Handling error conditions within the bus</p></li>
+</ul>
+<figure class="align-center" id="id2">
+<div class="align-default"><a class="reference internal image-reference" href="../../_images/blockdiag-d426964e42f0c63cc96e9402a24768545e344a79.png"><img height="320.0" src="../../_images/blockdiag-d426964e42f0c63cc96e9402a24768545e344a79.png" width="1050.0" /></a></div>
+<figcaption>
+<p><span class="caption-text">SD Host Side Component Architecture</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this heading"></a></h2>
+<p><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.2/examples/storage/sd_card/sdmmc">storage/sd_card/sdmmc</a> demonstrates how to operate an SD card formatted with the FatFS file system via the SDMMC interface.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.2/examples/storage/emmc">storage/emmc</a> demonstrates how to operate an eMMC chip formatted with the FatFS file system via the SDMMC interface.</p></li>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.2/examples/storage/sd_card/sdspi">storage/sd_card/sdspi</a> demonstrates how to operate an SD card formatted with the FatFS file system via the SPI interface.</p></li>
+</ul>
+</p>
+</section>
+<section id="protocol-layer-api">
+<h2>Protocol Layer API<a class="headerlink" href="#protocol-layer-api" title="Permalink to this heading"></a></h2>
+<p>The protocol layer is given the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_host_t</span></code> structure. This structure describes the SD/MMC host driver, lists its capabilities, and provides pointers to functions for the implementation driver. The protocol layer stores card-specific information in the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_card_t</span></code> structure. When sending commands to the SD/MMC host driver, the protocol layer uses the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_command_t</span></code> structure to describe the command, arguments, expected return values, and data to transfer if there is any.</p>
+<section id="using-api-with-sd-memory-cards">
+<h3>Using API with SD Memory Cards<a class="headerlink" href="#using-api-with-sd-memory-cards" title="Permalink to this heading"></a></h3>
+<p><ul class="simple">
+<li><p>To initialize the SDMMC host, call the host driver functions, e.g., <a class="reference internal" href="../peripherals/sdmmc_host.html#_CPPv415sdmmc_host_initv" title="sdmmc_host_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_init()</span></code></a>, <a class="reference internal" href="../peripherals/sdmmc_host.html#_CPPv420sdmmc_host_init_slotiPK19sdmmc_slot_config_t" title="sdmmc_host_init_slot"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_host_init_slot()</span></code></a>.¸</p></li>
+<li><p>To initialize the SDSPI host, call the host driver functions, e.g., <a class="reference internal" href="../peripherals/sdspi_host.html#_CPPv415sdspi_host_initv" title="sdspi_host_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_init()</span></code></a>, <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdspi_host_init_slot()</span></code>.</p></li>
+<li><p>To initialize the card, call <a class="reference internal" href="#_CPPv415sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t" title="sdmmc_card_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_card_init()</span></code></a> and pass to it the parameters <code class="docutils literal notranslate"><span class="pre">host</span></code> - the host driver information, and <code class="docutils literal notranslate"><span class="pre">card</span></code> - a pointer to the structure <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_card_t</span></code> which will be filled with information about the card when the function completes.</p></li>
+<li><p>To read and write sectors of the card, use <a class="reference internal" href="#_CPPv418sdmmc_read_sectorsP12sdmmc_card_tPv6size_t6size_t" title="sdmmc_read_sectors"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_read_sectors()</span></code></a> and <a class="reference internal" href="#_CPPv419sdmmc_write_sectorsP12sdmmc_card_tPKv6size_t6size_t" title="sdmmc_write_sectors"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_write_sectors()</span></code></a> respectively and pass to it the parameter <code class="docutils literal notranslate"><span class="pre">card</span></code> - a pointer to the card information structure.</p></li>
+<li><p>If the card is not used anymore, call the host driver function to disable the host peripheral and free the resources allocated by the driver (<code class="docutils literal notranslate"><span class="pre">sdmmc_host_deinit</span></code> for SDMMC or <code class="docutils literal notranslate"><span class="pre">sdspi_host_deinit</span></code> for SDSPI).</p></li>
+</ul>
+</p>
+</section>
+<section id="using-api-with-emmc-chips">
+<h3>Using API with eMMC Chips<a class="headerlink" href="#using-api-with-emmc-chips" title="Permalink to this heading"></a></h3>
+<p>From the protocol layer's perspective, eMMC memory chips behave exactly like SD memory cards. Even though eMMCs are chips and do not have a card form factor, the terminology for SD cards can still be applied to eMMC due to the similarity of the protocol (<cite>sdmmc_card_t</cite>, <cite>sdmmc_card_init</cite>). Note that eMMC chips cannot be used over SPI, which makes them incompatible with the SD SPI host driver.</p>
+<p>To initialize eMMC memory and perform read/write operations, follow the steps listed for SD cards in the previous section.</p>
+</section>
+<section id="using-api-with-sdio-cards">
+<h3>Using API with SDIO Cards<a class="headerlink" href="#using-api-with-sdio-cards" title="Permalink to this heading"></a></h3>
+<p>Initialization and the probing process are the same as with SD memory cards. The only difference is in data transfer commands in SDIO mode.</p>
+<p>During the card initialization and probing, performed with <a class="reference internal" href="#_CPPv415sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t" title="sdmmc_card_init"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_card_init()</span></code></a>, the driver only configures the following registers of the IO card:</p>
+<ol class="arabic simple">
+<li><p>The IO portion of the card is reset by setting RES bit in the I/O Abort (0x06) register.</p></li>
+<li><p>If 4-line mode is enabled in host and slot configuration, the driver attempts to set the Bus width field in the Bus Interface Control (0x07) register. If setting the filed is successful, which means that the slave supports 4-line mode, the host is also switched to 4-line mode.</p></li>
+<li><p>If high-speed mode is enabled in the host configuration, the SHS bit is set in the High Speed (0x13) register.</p></li>
+</ol>
+<p>In particular, the driver does not set any bits in (1) I/O Enable and Int Enable registers, (2) I/O block sizes, etc. Applications can set them by calling <a class="reference internal" href="#_CPPv419sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t" title="sdmmc_io_write_byte"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_write_byte()</span></code></a>.</p>
+<p>For card configuration and data transfer, choose the pair of functions relevant to your case from the table below.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55.0%" />
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Action</p></th>
+<th class="head"><p>Read Function</p></th>
+<th class="head"><p>Write Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Read and write a single byte using IO_RW_DIRECT (CMD52)</p></td>
+<td><p><a class="reference internal" href="#_CPPv418sdmmc_io_read_byteP12sdmmc_card_t8uint32_t8uint32_tP7uint8_t" title="sdmmc_io_read_byte"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_read_byte()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv419sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t" title="sdmmc_io_write_byte"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_write_byte()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Read and write multiple bytes using IO_RW_EXTENDED (CMD53) in byte mode</p></td>
+<td><p><a class="reference internal" href="#_CPPv419sdmmc_io_read_bytesP12sdmmc_card_t8uint32_t8uint32_tPv6size_t" title="sdmmc_io_read_bytes"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_read_bytes()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv420sdmmc_io_write_bytesP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t" title="sdmmc_io_write_bytes"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_write_bytes()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Read and write blocks of data using IO_RW_EXTENDED (CMD53) in block mode</p></td>
+<td><p><a class="reference internal" href="#_CPPv420sdmmc_io_read_blocksP12sdmmc_card_t8uint32_t8uint32_tPv6size_t" title="sdmmc_io_read_blocks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_read_blocks()</span></code></a></p></td>
+<td><p><a class="reference internal" href="#_CPPv421sdmmc_io_write_blocksP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t" title="sdmmc_io_write_blocks"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_write_blocks()</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>SDIO interrupts can be enabled by the application using the function <a class="reference internal" href="#_CPPv419sdmmc_io_enable_intP12sdmmc_card_t" title="sdmmc_io_enable_int"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_enable_int()</span></code></a>. When using SDIO in 1-line mode, the D1 line also needs to be connected to use SDIO interrupts.</p>
+<p>If you want the application to wait until the SDIO interrupt occurs, use <a class="reference internal" href="#_CPPv417sdmmc_io_wait_intP12sdmmc_card_t10TickType_t" title="sdmmc_io_wait_int"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">sdmmc_io_wait_int()</span></code></a>.</p>
+<p>There is a component ESSL (ESP Serial Slave Link) to use if you are communicating with an ESP32 SDIO slave. See <a class="reference internal" href="../protocols/esp_serial_slave_link.html"><span class="doc">ESP Serial Slave Link</span></a> and example <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v5.5.2/examples/peripherals/sdio/host">peripherals/sdio/host</a>.</p>
+</section>
+<section id="combo-memory-io-cards">
+<h3>Combo (Memory + IO) Cards<a class="headerlink" href="#combo-memory-io-cards" title="Permalink to this heading"></a></h3>
+<p>The driver does not support SD combo cards. Combo cards are treated as IO cards.</p>
+</section>
+<section id="thread-safety">
+<h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Permalink to this heading"></a></h3>
+<p>Most applications need to use the protocol layer only in one task. For this reason, the protocol layer does not implement any kind of locking on the <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">sdmmc_card_t</span></code> structure, or when accessing SDMMC or SD SPI host drivers. Such locking is usually implemented on a higher layer, e.g., in the filesystem driver.</p>
+</section>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
+<section id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.2/components/sdmmc/include/sdmmc_cmd.h">components/sdmmc/include/sdmmc_cmd.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sdmmc_cmd.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">sdmmc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES sdmmc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES sdmmc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t">
+<span id="_CPPv315sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t"></span><span id="_CPPv215sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t"></span><span id="sdmmc_card_init__sdmmc_host_tCP.sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1a55d5ac13fbfdc65c8984da68dfcac06a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_card_init</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">sdmmc_host_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">host</span></span>, <span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sdmmc_card_initPK12sdmmc_host_tP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Probe and initialize SD/MMC card using given host</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> -- pointer to structure defining host controller </p></li>
+<li><p><strong>out_card</strong> -- pointer to structure which will receive information about the card when the function completes </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421sdmmc_card_print_infoP4FILEPK12sdmmc_card_t">
+<span id="_CPPv321sdmmc_card_print_infoP4FILEPK12sdmmc_card_t"></span><span id="_CPPv221sdmmc_card_print_infoP4FILEPK12sdmmc_card_t"></span><span id="sdmmc_card_print_info__FILEP.sdmmc_card_tCP"></span><span class="target" id="sdmmc__cmd_8h_1a75a63731e8699622feb543b77d5c3c8d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_card_print_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stream</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421sdmmc_card_print_infoP4FILEPK12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Print information about the card to a stream. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream</strong> -- stream obtained using fopen or fdopen </p></li>
+<li><p><strong>card</strong> -- card information structure initialized using sdmmc_card_init </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416sdmmc_get_statusP12sdmmc_card_t">
+<span id="_CPPv316sdmmc_get_statusP12sdmmc_card_t"></span><span id="_CPPv216sdmmc_get_statusP12sdmmc_card_t"></span><span id="sdmmc_get_status__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1acb15a5d2deb9a7d4a4b5068d73aca9d1"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_get_status</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416sdmmc_get_statusP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get status of SD/MMC card</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_write_sectorsP12sdmmc_card_tPKv6size_t6size_t">
+<span id="_CPPv319sdmmc_write_sectorsP12sdmmc_card_tPKv6size_t6size_t"></span><span id="_CPPv219sdmmc_write_sectorsP12sdmmc_card_tPKv6size_t6size_t"></span><span id="sdmmc_write_sectors__sdmmc_card_tP.voidCP.s.s"></span><span class="target" id="sdmmc__cmd_8h_1aea07897f76ceba26e5f37ab7cfc97496"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_write_sectors</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">src</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start_sector</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sector_count</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdmmc_write_sectorsP12sdmmc_card_tPKv6size_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write given number of sectors to SD/MMC card</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>src</strong> -- pointer to data buffer to read data from; data size must be equal to sector_count * card-&gt;csd.sector_size </p></li>
+<li><p><strong>start_sector</strong> -- sector where to start writing </p></li>
+<li><p><strong>sector_count</strong> -- number of sectors to write </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success or sector_count equal to 0</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418sdmmc_read_sectorsP12sdmmc_card_tPv6size_t6size_t">
+<span id="_CPPv318sdmmc_read_sectorsP12sdmmc_card_tPv6size_t6size_t"></span><span id="_CPPv218sdmmc_read_sectorsP12sdmmc_card_tPv6size_t6size_t"></span><span id="sdmmc_read_sectors__sdmmc_card_tP.voidP.s.s"></span><span class="target" id="sdmmc__cmd_8h_1ad08848c3b69fd4c38c2a968fdbc073fe"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_read_sectors</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dst</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start_sector</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sector_count</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418sdmmc_read_sectorsP12sdmmc_card_tPv6size_t6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read given number of sectors from the SD/MMC card</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>dst</strong> -- pointer to data buffer to write into; buffer size must be at least sector_count * card-&gt;csd.sector_size </p></li>
+<li><p><strong>start_sector</strong> -- sector where to start reading </p></li>
+<li><p><strong>sector_count</strong> -- number of sectors to read </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success or sector_count equal to 0</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_erase_sectorsP12sdmmc_card_t6size_t6size_t17sdmmc_erase_arg_t">
+<span id="_CPPv319sdmmc_erase_sectorsP12sdmmc_card_t6size_t6size_t17sdmmc_erase_arg_t"></span><span id="_CPPv219sdmmc_erase_sectorsP12sdmmc_card_t6size_t6size_t17sdmmc_erase_arg_t"></span><span id="sdmmc_erase_sectors__sdmmc_card_tP.s.s.sdmmc_erase_arg_t"></span><span class="target" id="sdmmc__cmd_8h_1a094462f00979ba9b20f62d197d304c1e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_erase_sectors</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start_sector</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sector_count</span></span>, <span class="n"><span class="pre">sdmmc_erase_arg_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdmmc_erase_sectorsP12sdmmc_card_t6size_t6size_t17sdmmc_erase_arg_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Erase given number of sectors from the SD/MMC card</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When sdmmc_erase_sectors used with cards in SDSPI mode, it was observed that card requires re-init after erase operation.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>start_sector</strong> -- sector where to start erase </p></li>
+<li><p><strong>sector_count</strong> -- number of sectors to erase </p></li>
+<li><p><strong>arg</strong> -- erase command (CMD38) argument </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success or sector_count equal to 0</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sdmmc_can_discardP12sdmmc_card_t">
+<span id="_CPPv317sdmmc_can_discardP12sdmmc_card_t"></span><span id="_CPPv217sdmmc_can_discardP12sdmmc_card_t"></span><span id="sdmmc_can_discard__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1ae557afa48f7fe1fbd5e410000d28e1f6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_can_discard</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sdmmc_can_discardP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if SD/MMC card supports discard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if supported by the card/device</p></li>
+<li><p>ESP_FAIL if not supported by the card/device </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414sdmmc_can_trimP12sdmmc_card_t">
+<span id="_CPPv314sdmmc_can_trimP12sdmmc_card_t"></span><span id="_CPPv214sdmmc_can_trimP12sdmmc_card_t"></span><span id="sdmmc_can_trim__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1a37614aa58c934647abac7711e477dc1e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_can_trim</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414sdmmc_can_trimP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if SD/MMC card supports trim</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if supported by the card/device</p></li>
+<li><p>ESP_FAIL if not supported by the card/device </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422sdmmc_mmc_can_sanitizeP12sdmmc_card_t">
+<span id="_CPPv322sdmmc_mmc_can_sanitizeP12sdmmc_card_t"></span><span id="_CPPv222sdmmc_mmc_can_sanitizeP12sdmmc_card_t"></span><span id="sdmmc_mmc_can_sanitize__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1aa04fc866517524ba95b5afd1c015a03a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_mmc_can_sanitize</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422sdmmc_mmc_can_sanitizeP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check if SD/MMC card supports sanitize</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if supported by the card/device</p></li>
+<li><p>ESP_FAIL if not supported by the card/device </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418sdmmc_mmc_sanitizeP12sdmmc_card_t8uint32_t">
+<span id="_CPPv318sdmmc_mmc_sanitizeP12sdmmc_card_t8uint32_t"></span><span id="_CPPv218sdmmc_mmc_sanitizeP12sdmmc_card_t8uint32_t"></span><span id="sdmmc_mmc_sanitize__sdmmc_card_tP.uint32_t"></span><span class="target" id="sdmmc__cmd_8h_1af244d60a39ec85e5d180604f754fbadf"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_mmc_sanitize</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_ms</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418sdmmc_mmc_sanitizeP12sdmmc_card_t8uint32_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sanitize the data that was unmapped by a Discard command</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Discard command has to precede sanitize operation. To discard, use MMC_DICARD_ARG with sdmmc_erase_sectors argument</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>timeout_ms</strong> -- timeout value in milliseconds required to sanitize the selected range of sectors. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416sdmmc_full_eraseP12sdmmc_card_t">
+<span id="_CPPv316sdmmc_full_eraseP12sdmmc_card_t"></span><span id="_CPPv216sdmmc_full_eraseP12sdmmc_card_t"></span><span id="sdmmc_full_erase__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1ad0b293f02f5b7b35b823a306b7340ed7"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_full_erase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416sdmmc_full_eraseP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Erase complete SD/MMC card</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418sdmmc_io_read_byteP12sdmmc_card_t8uint32_t8uint32_tP7uint8_t">
+<span id="_CPPv318sdmmc_io_read_byteP12sdmmc_card_t8uint32_t8uint32_tP7uint8_t"></span><span id="_CPPv218sdmmc_io_read_byteP12sdmmc_card_t8uint32_t8uint32_tP7uint8_t"></span><span id="sdmmc_io_read_byte__sdmmc_card_tP.uint32_t.uint32_t.uint8_tP"></span><span class="target" id="sdmmc__cmd_8h_1af4f59afeca9dc26384e94fdde43ecc9a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_read_byte</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">reg</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_byte</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418sdmmc_io_read_byteP12sdmmc_card_t8uint32_t8uint32_tP7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read one byte from an SDIO card using IO_RW_DIRECT (CMD52)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>reg</strong> -- byte address within IO function </p></li>
+<li><p><strong>out_byte</strong> -- <strong>[out]</strong> output, receives the value read from the card </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t">
+<span id="_CPPv319sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t"></span><span id="_CPPv219sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t"></span><span id="sdmmc_io_write_byte__sdmmc_card_tP.uint32_t.uint32_t.uint8_t.uint8_tP"></span><span class="target" id="sdmmc__cmd_8h_1a27a7bc0944c79abbf658b0b2e557fd4a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_write_byte</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">reg</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">in_byte</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_byte</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdmmc_io_write_byteP12sdmmc_card_t8uint32_t8uint32_t7uint8_tP7uint8_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write one byte to an SDIO card using IO_RW_DIRECT (CMD52)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>reg</strong> -- byte address within IO function </p></li>
+<li><p><strong>in_byte</strong> -- value to be written </p></li>
+<li><p><strong>out_byte</strong> -- <strong>[out]</strong> if not NULL, receives new byte value read from the card (read-after-write). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_io_read_bytesP12sdmmc_card_t8uint32_t8uint32_tPv6size_t">
+<span id="_CPPv319sdmmc_io_read_bytesP12sdmmc_card_t8uint32_t8uint32_tPv6size_t"></span><span id="_CPPv219sdmmc_io_read_bytesP12sdmmc_card_t8uint32_t8uint32_tPv6size_t"></span><span id="sdmmc_io_read_bytes__sdmmc_card_tP.uint32_t.uint32_t.voidP.s"></span><span class="target" id="sdmmc__cmd_8h_1a249c9ec3b065c2884c3cc63ea3cda0ec"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_read_bytes</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dst</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdmmc_io_read_bytesP12sdmmc_card_t8uint32_t8uint32_tPv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read multiple bytes from an SDIO card using IO_RW_EXTENDED (CMD53)</p>
+<p>This function performs read operation using CMD53 in byte mode. For block mode, see sdmmc_io_read_blocks.</p>
+<p>By default OP Code is set (incrementing address). To send CMD53 without this bit, OR the argument <code class="docutils literal notranslate"><span class="pre">addr</span></code> with <code class="docutils literal notranslate"><span class="pre">SDMMC_IO_FIXED_ADDR</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>addr</strong> -- byte address within IO function where reading starts </p></li>
+<li><p><strong>dst</strong> -- buffer which receives the data read from card. Aligned to 4 byte boundary unless <code class="docutils literal notranslate"><span class="pre">SDMMC_HOST_FLAG_ALLOC_ALIGNED_BUF</span></code> flag is set when calling <code class="docutils literal notranslate"><span class="pre">sdmmc_card_init</span></code>. The flag is mandatory when the buffer is behind the cache. </p></li>
+<li><p><strong>size</strong> -- number of bytes to read, 1 to 512. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if size exceeds 512 bytes</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420sdmmc_io_write_bytesP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t">
+<span id="_CPPv320sdmmc_io_write_bytesP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t"></span><span id="_CPPv220sdmmc_io_write_bytesP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t"></span><span id="sdmmc_io_write_bytes__sdmmc_card_tP.uint32_t.uint32_t.voidCP.s"></span><span class="target" id="sdmmc__cmd_8h_1a146a48faf28b40359dce85d31ea847d1"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_write_bytes</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">src</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420sdmmc_io_write_bytesP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write multiple bytes to an SDIO card using IO_RW_EXTENDED (CMD53)</p>
+<p>This function performs write operation using CMD53 in byte mode. For block mode, see sdmmc_io_write_blocks.</p>
+<p>By default OP Code is set (incrementing address). To send CMD53 without this bit, OR the argument <code class="docutils literal notranslate"><span class="pre">addr</span></code> with <code class="docutils literal notranslate"><span class="pre">SDMMC_IO_FIXED_ADDR</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>addr</strong> -- byte address within IO function where writing starts </p></li>
+<li><p><strong>src</strong> -- data to be written. Aligned to 4 byte boundary unless <code class="docutils literal notranslate"><span class="pre">SDMMC_HOST_FLAG_ALLOC_ALIGNED_BUF</span></code> flag is set when calling <code class="docutils literal notranslate"><span class="pre">sdmmc_card_init</span></code>. The flag is mandatory when the buffer is behind the cache. </p></li>
+<li><p><strong>size</strong> -- number of bytes to write, 1 to 512. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if size exceeds 512 bytes</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420sdmmc_io_read_blocksP12sdmmc_card_t8uint32_t8uint32_tPv6size_t">
+<span id="_CPPv320sdmmc_io_read_blocksP12sdmmc_card_t8uint32_t8uint32_tPv6size_t"></span><span id="_CPPv220sdmmc_io_read_blocksP12sdmmc_card_t8uint32_t8uint32_tPv6size_t"></span><span id="sdmmc_io_read_blocks__sdmmc_card_tP.uint32_t.uint32_t.voidP.s"></span><span class="target" id="sdmmc__cmd_8h_1a0038437d6925be9d316b1fe1e6e9ef9c"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_read_blocks</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dst</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420sdmmc_io_read_blocksP12sdmmc_card_t8uint32_t8uint32_tPv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Read blocks of data from an SDIO card using IO_RW_EXTENDED (CMD53)</p>
+<p>This function performs read operation using CMD53 in block mode. For byte mode, see sdmmc_io_read_bytes.</p>
+<p>By default OP Code is set (incrementing address). To send CMD53 without this bit, OR the argument <code class="docutils literal notranslate"><span class="pre">addr</span></code> with <code class="docutils literal notranslate"><span class="pre">SDMMC_IO_FIXED_ADDR</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>addr</strong> -- byte address within IO function where writing starts </p></li>
+<li><p><strong>dst</strong> -- buffer which receives the data read from card. Aligned to 4 byte boundary, and also cache line size if the buffer is behind the cache. </p></li>
+<li><p><strong>size</strong> -- number of bytes to read, must be divisible by the card block size. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if size is not divisible by 512 bytes</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421sdmmc_io_write_blocksP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t">
+<span id="_CPPv321sdmmc_io_write_blocksP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t"></span><span id="_CPPv221sdmmc_io_write_blocksP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t"></span><span id="sdmmc_io_write_blocks__sdmmc_card_tP.uint32_t.uint32_t.voidCP.s"></span><span class="target" id="sdmmc__cmd_8h_1a796176b7e301578ec66a308118739525"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_write_blocks</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">function</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">addr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">src</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421sdmmc_io_write_blocksP12sdmmc_card_t8uint32_t8uint32_tPKv6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Write blocks of data to an SDIO card using IO_RW_EXTENDED (CMD53)</p>
+<p>This function performs write operation using CMD53 in block mode. For byte mode, see sdmmc_io_write_bytes.</p>
+<p>By default OP Code is set (incrementing address). To send CMD53 without this bit, OR the argument <code class="docutils literal notranslate"><span class="pre">addr</span></code> with <code class="docutils literal notranslate"><span class="pre">SDMMC_IO_FIXED_ADDR</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>function</strong> -- IO function number </p></li>
+<li><p><strong>addr</strong> -- byte address within IO function where writing starts </p></li>
+<li><p><strong>src</strong> -- data to be written. Aligned to 4 byte boundary, and also cache line size if the buffer is behind the cache. </p></li>
+<li><p><strong>size</strong> -- number of bytes to write, must be divisible by the card block size. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_INVALID_SIZE if size is not divisible by 512 bytes</p></li>
+<li><p>One of the error codes from SDMMC host controller </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sdmmc_io_enable_intP12sdmmc_card_t">
+<span id="_CPPv319sdmmc_io_enable_intP12sdmmc_card_t"></span><span id="_CPPv219sdmmc_io_enable_intP12sdmmc_card_t"></span><span id="sdmmc_io_enable_int__sdmmc_card_tP"></span><span class="target" id="sdmmc__cmd_8h_1a4e1cd33cc142ac88511e5a55a7a0b4db"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_enable_int</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sdmmc_io_enable_intP12sdmmc_card_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enable SDIO interrupt in the SDMMC host</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if the host controller does not support IO interrupts </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sdmmc_io_wait_intP12sdmmc_card_t10TickType_t">
+<span id="_CPPv317sdmmc_io_wait_intP12sdmmc_card_t10TickType_t"></span><span id="_CPPv217sdmmc_io_wait_intP12sdmmc_card_t10TickType_t"></span><span id="sdmmc_io_wait_int__sdmmc_card_tP.TickType_t"></span><span class="target" id="sdmmc__cmd_8h_1ad8791633f2ae371d338cb8a1e242ad79"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_wait_int</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">TickType_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout_ticks</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sdmmc_io_wait_intP12sdmmc_card_t10TickType_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Block until an SDIO interrupt is received</p>
+<p>Slave uses D1 line to signal interrupt condition to the host. This function can be used to wait for the interrupt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>timeout_ticks</strong> -- time to wait for the interrupt, in RTOS ticks </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK if the interrupt is received</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED if the host controller does not support IO interrupts</p></li>
+<li><p>ESP_ERR_TIMEOUT if the interrupt does not happen in timeout_ticks </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421sdmmc_io_get_cis_dataP12sdmmc_card_tP7uint8_t6size_tP6size_t">
+<span id="_CPPv321sdmmc_io_get_cis_dataP12sdmmc_card_tP7uint8_t6size_tP6size_t"></span><span id="_CPPv221sdmmc_io_get_cis_dataP12sdmmc_card_tP7uint8_t6size_tP6size_t"></span><span id="sdmmc_io_get_cis_data__sdmmc_card_tP.uint8_tP.s.sP"></span><span class="target" id="sdmmc__cmd_8h_1aefa22e48ce2772f249ed428753c83013"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_get_cis_data</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">sdmmc_card_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">card</span></span>, <span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">out_buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buffer_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">inout_cis_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421sdmmc_io_get_cis_dataP12sdmmc_card_tP7uint8_t6size_tP6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Get the data of CIS region of an SDIO card.</p>
+<p>You may provide a buffer not sufficient to store all the CIS data. In this case, this function stores as much data into your buffer as possible. Also, this function will try to get and return the size required for you.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>card</strong> -- pointer to card information structure previously initialized using sdmmc_card_init </p></li>
+<li><p><strong>out_buffer</strong> -- Output buffer of the CIS data </p></li>
+<li><p><strong>buffer_size</strong> -- Size of the buffer. </p></li>
+<li><p><strong>inout_cis_size</strong> -- Mandatory, pointer to a size, input and output.<ul>
+<li><p>input: Limitation of maximum searching range, should be 0 or larger than buffer_size. The function searches for CIS_CODE_END until this range. Set to 0 to search infinitely.</p></li>
+<li><p>output: The size required to store all the CIS data, if CIS_CODE_END is found.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>ESP_ERR_INVALID_RESPONSE: if the card does not (correctly) support CIS.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: CIS_CODE_END found, but buffer_size is less than required size, which is stored in the inout_cis_size then.</p></li>
+<li><p>ESP_ERR_NOT_FOUND: if the CIS_CODE_END not found. Increase input value of inout_cis_size or set it to 0, if you still want to search for the end; output value of inout_cis_size is invalid in this case.</p></li>
+<li><p>and other error code return from sdmmc_io_read_bytes </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423sdmmc_io_print_cis_infoP7uint8_t6size_tP4FILE">
+<span id="_CPPv323sdmmc_io_print_cis_infoP7uint8_t6size_tP4FILE"></span><span id="_CPPv223sdmmc_io_print_cis_infoP7uint8_t6size_tP4FILE"></span><span id="sdmmc_io_print_cis_info__uint8_tP.s.FILEP"></span><span class="target" id="sdmmc__cmd_8h_1ada8fcaa22fbe413013ce1fb740038fdf"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t"><span class="n"><span class="pre">esp_err_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sdmmc_io_print_cis_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buffer_size</span></span>, <span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">fp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423sdmmc_io_print_cis_infoP7uint8_t6size_tP4FILE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Parse and print the CIS information of an SDIO card.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Not all the CIS codes and all kinds of tuples are supported. If you see some unresolved code, you can add the parsing of these code in sdmmc_io.c and contribute to the IDF through the Github repository. <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">using</span> <span class="n">sdmmc_card_init</span>
+</pre></div>
+</div>
+</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> -- Buffer to parse </p></li>
+<li><p><strong>buffer_size</strong> -- Size of the buffer. </p></li>
+<li><p><strong>fp</strong> -- File pointer to print to, set to NULL to print to stdout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ESP_OK: on success</p></li>
+<li><p>ESP_ERR_NOT_SUPPORTED: if the value from the card is not supported to be parsed.</p></li>
+<li><p>ESP_ERR_INVALID_SIZE: if the CIS size fields are not correct. </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h3>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.SDMMC_IO_FIXED_ADDR">
+<span class="target" id="sdmmc__cmd_8h_1a7bae6aa37663c8ff0c372cd594df3866"></span><span class="sig-name descname"><span class="n"><span class="pre">SDMMC_IO_FIXED_ADDR</span></span></span><a class="headerlink" href="#c.SDMMC_IO_FIXED_ADDR" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Call <code class="docutils literal notranslate"><span class="pre">sdmmc_io_read_bytes</span></code>, <code class="docutils literal notranslate"><span class="pre">sdmmc_io_write_bytes</span></code>, <code class="docutils literal notranslate"><span class="pre">sdmmc_io_read_blocks</span></code> or <code class="docutils literal notranslate"><span class="pre">sdmmc_io_write_bocks</span></code> APIs with address ORed by this flag to send CMD53 with OP Code clear (fixed address) </p>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v5.5.2/components/esp_driver_sdmmc/include/driver/sdmmc_types.h">components/esp_driver_sdmmc/include/driver/sdmmc_types.h</a></p></li>
+<li><p>This header file can be included with:</p>
+<blockquote>
+<div><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;driver/sdmmc_types.h&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This header file is a part of the API provided by the <code class="docutils literal notranslate"><span class="pre">esp_driver_sdmmc</span></code> component. To declare that your component depends on <code class="docutils literal notranslate"><span class="pre">esp_driver_sdmmc</span></code>, add the following to your CMakeLists.txt:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REQUIRES esp_driver_sdmmc
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PRIV_REQUIRES esp_driver_sdmmc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+
+<style>
+    .expand-feedback-content {
+        display: none;
+    }
+    .click-like-or-dislike {
+        background-color: #d3d3d3;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    function submitFeedbackForm(user_likes_document) {
+        // Send to GA4 the user reaction
+        gtag('event', 'user_reaction', {
+            'user_likes_document': user_likes_document
+        });
+
+        if (user_likes_document === 1) {
+            document.querySelector('.like-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContentLike").style.display = 'block';
+        } else {
+            document.querySelector('.dislike-btn').classList.add('click-like-or-dislike');
+            document.getElementById("expandContent").style.display = 'block';
+        }
+
+        document.querySelector('.like-btn').style.pointerEvents = 'none';
+        document.querySelector('.dislike-btn').style.pointerEvents = 'none';
+    }
+</script>
+
+<hr>
+
+<p style="text-align:center"><strong>Was this page helpful?</strong></p>
+<p style="text-align:center">
+    <button class="like-btn" onclick="submitFeedbackForm(1)">
+        <svg aria-hidden="true" focusable="false" class="color-fg-muted" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M8.834.066c.763.087 1.5.295 2.01.884.505.581.656 1.378.656 2.3 0 .467-.087 1.119-.157 1.637L11.328 5h1.422c.603 0 1.174.085 1.668.333.508.254.911.679 1.137 1.2.453.998.438 2.447.188 4.316l-.04.306c-.105.79-.195 1.473-.313 2.033-.131.63-.315 1.209-.668 1.672C13.97 15.847 12.706 16 11 16c-1.848 0-3.234-.333-4.388-.653-.165-.045-.323-.09-.475-.133-.658-.186-1.2-.34-1.725-.415A1.75 1.75 0 0 1 2.75 16h-1A1.75 1.75 0 0 1 0 14.25v-7.5C0 5.784.784 5 1.75 5h1a1.75 1.75 0 0 1 1.514.872c.258-.105.59-.268.918-.508C5.853 4.874 6.5 4.079 6.5 2.75v-.5c0-1.202.994-2.337 2.334-2.184ZM4.5 13.3c.705.088 1.39.284 2.072.478l.441.125c1.096.305 2.334.598 3.987.598 1.794 0 2.28-.223 2.528-.549.147-.193.276-.505.394-1.07.105-.502.188-1.124.295-1.93l.04-.3c.25-1.882.189-2.933-.068-3.497a.921.921 0 0 0-.442-.48c-.208-.104-.52-.174-.997-.174H11c-.686 0-1.295-.577-1.206-1.336.023-.192.05-.39.076-.586.065-.488.13-.97.13-1.328 0-.809-.144-1.15-.288-1.316-.137-.158-.402-.304-1.048-.378C8.357 1.521 8 1.793 8 2.25v.5c0 1.922-.978 3.128-1.933 3.825a5.831 5.831 0 0 1-1.567.81ZM2.75 6.5h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+        </svg>
+    </button>
+    <button class="dislike-btn" onclick="submitFeedbackForm(0)">
+        <svg aria-hidden="true" focusable="false" class="" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+            <path d="M7.083 15.986c-.763-.087-1.499-.295-2.011-.884-.504-.581-.655-1.378-.655-2.299 0-.468.087-1.12.157-1.638l.015-.112H3.167c-.603 0-1.174-.086-1.669-.334a2.415 2.415 0 0 1-1.136-1.2c-.454-.998-.438-2.447-.188-4.316l.04-.306C.32 4.108.41 3.424.526 2.864c.132-.63.316-1.209.669-1.672C1.947.205 3.211.053 4.917.053c1.848 0 3.234.332 4.388.652l.474.133c.658.187 1.201.341 1.726.415a1.75 1.75 0 0 1 1.662-1.2h1c.966 0 1.75.784 1.75 1.75v7.5a1.75 1.75 0 0 1-1.75 1.75h-1a1.75 1.75 0 0 1-1.514-.872c-.259.105-.59.268-.919.508-.671.491-1.317 1.285-1.317 2.614v.5c0 1.201-.994 2.336-2.334 2.183Zm4.334-13.232c-.706-.089-1.39-.284-2.072-.479l-.441-.125c-1.096-.304-2.335-.597-3.987-.597-1.794 0-2.28.222-2.529.548-.147.193-.275.505-.393 1.07-.105.502-.188 1.124-.295 1.93l-.04.3c-.25 1.882-.19 2.933.067 3.497a.923.923 0 0 0 .443.48c.208.104.52.175.997.175h1.75c.685 0 1.295.577 1.205 1.335-.022.192-.049.39-.075.586-.066.488-.13.97-.13 1.329 0 .808.144 1.15.288 1.316.137.157.401.303 1.048.377.307.035.664-.237.664-.693v-.5c0-1.922.978-3.127 1.932-3.825a5.878 5.878 0 0 1 1.568-.809Zm1.75 6.798h1a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-1a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25Z"></path>
+        </svg>
+    </button>
+</p>
+
+<div class="expand-feedback-content" id="expandContentLike">
+    <ul style="text-align:center">
+        <li>Thank you! We received your feedback.</li>
+        <li>If you have any comments, fill in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SD/SDIO/MMC Driver (api-reference/storage/sdmmc)&version=esp32 v5.5.2 (v5.5.2)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<div class="expand-feedback-content" id="expandContent">
+    <ul style="text-align:center">
+        <li>We value your feedback.</li>
+        <li>Let us know how we can improve this page by filling in <a href='https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=SD/SDIO/MMC Driver (api-reference/storage/sdmmc)&version=esp32 v5.5.2 (v5.5.2)'>Espressif Documentation Feedback Form</a>.</li>
+    </ul>
+</div>
+
+<br>
+
+
+             </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nvs_partition_parse.html" class="btn btn-neutral float-left" title="NVS Partition Parser Utility" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="partition.html" class="btn btn-neutral float-right" title="Partitions API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016 - 2025, Espressif Systems (Shanghai) Co., Ltd.</p>
+  </div>
+
+  <ul class="footer">
+        <li>
+	    
+            
+            Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+         </li>
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v5.5.2.zip"> Download HTML</a>
+    </li>
+
+  </ul> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
