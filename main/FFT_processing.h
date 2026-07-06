@@ -5,5 +5,7 @@
 #include "esp_log.h"
 #include "global.h"
 
-void frequency_to_LED_position();
-void frequency_to_LED_color();
+void frequency_to_LED_position1(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
+                                float silence_offset);
+void frequency_to_LED_position2(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
+                                float silence_offset);
