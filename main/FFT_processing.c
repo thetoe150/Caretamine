@@ -5,6 +5,7 @@ static float magnitudes[SAMPLE_SIZE / 2];
 
 void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
     ESP_ERROR_CHECK(dsps_fft2r_init_fc32(NULL, CONFIG_DSP_MAX_FFT_SIZE));
+    memset(digi_sound_buf, 0, size);
 
     int sum = 0;
     for (int i = 0; i < SAMPLE_SIZE; i++) {

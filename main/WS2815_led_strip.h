@@ -1,3 +1,6 @@
+#ifndef LED_STRIP_H
+#define LED_STRIP_H
+
 #include <stdint.h>
 
 #include "driver/rmt_encoder.h"
@@ -12,7 +15,9 @@ typedef struct {
     uint32_t resolution; /*!< Encoder resolution, in Hz */
 } led_strip_encoder_config_t;
 
-esp_err_t rmt_new_led_strip_encoder(const led_strip_encoder_config_t* config,
-                                    rmt_encoder_handle_t* ret_encoder);
+esp_err_t create_led_strip_encoder(const led_strip_encoder_config_t* config,
+                                   rmt_encoder_handle_t* ret_encoder);
+uint8_t* init_WS2815_LED_strip();
+void update_led_strip();
 
-void update_led_strip(void* args);
+#endif  // LED_STRIP_H

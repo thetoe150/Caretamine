@@ -17,7 +17,10 @@ static const char* LED_STRIP_TAG = "led_strip_encoder";
 
 #define CHASE_SPEED_MS 10
 
-static uint8_t led_strip_pixels[LED_NUMBERS * 3];
+rmt_channel_handle_t led_chan = NULL;
+rmt_encoder_handle_t led_encoder = NULL;
+
+uint8_t* led_strip_pixels = NULL;
 
 typedef struct {
     rmt_encoder_t base;
@@ -85,8 +88,8 @@ static esp_err_t rmt_led_strip_encoder_reset(rmt_encoder_t* encoder) {
     return ESP_OK;
 }
 
-esp_err_t rmt_new_led_strip_encoder(const led_strip_encoder_config_t* config,
-                                    rmt_encoder_handle_t* ret_encoder) {
+esp_err_t create_led_strip_encoder(const led_strip_encoder_config_t* config,
+                                   rmt_encoder_handle_t* ret_encoder) {
     esp_err_t ret = ESP_OK;
     rmt_led_strip_encoder_t* led_encoder = NULL;
     ESP_GOTO_ON_FALSE(config && ret_encoder, ESP_ERR_INVALID_ARG, err, LED_STRIP_TAG,
@@ -166,11 +169,8 @@ err:
     return ret;
 }
 
-void update_led_strip(void* args) {
-    uint16_t start_rgb = 0;
-
+uint8_t* init_WS2815_LED_strip() {
     ESP_LOGI(LED_STRIP_TAG, "Create RMT TX channel");
-    rmt_channel_handle_t led_chan = NULL;
     rmt_tx_channel_config_t tx_chan_config = {
         .clk_src = RMT_CLK_SRC_DEFAULT,  // select source clock
         .gpio_num = RMT_LED_STRIP_GPIO_NUM,
@@ -182,37 +182,40 @@ void update_led_strip(void* args) {
     ESP_ERROR_CHECK(rmt_new_tx_channel(&tx_chan_config, &led_chan));
 
     ESP_LOGI(LED_STRIP_TAG, "Install led strip encoder");
-    rmt_encoder_handle_t led_encoder = NULL;
     led_strip_encoder_config_t encoder_config = {
         .resolution = RMT_LED_STRIP_RESOLUTION_HZ,
     };
-    ESP_ERROR_CHECK(rmt_new_led_strip_encoder(&encoder_config, &led_encoder));
+    ESP_ERROR_CHECK(create_led_strip_encoder(&encoder_config, &led_encoder));
 
     ESP_LOGI(LED_STRIP_TAG, "Enable RMT TX channel");
     ESP_ERROR_CHECK(rmt_enable(led_chan));
 
+    led_strip_pixels = (uint8_t*)malloc(LED_NUMBERS * 3);
+
+    return led_strip_pixels;
+}
+
+void update_led_strip() {
     ESP_LOGI(LED_STRIP_TAG, "Start LED rainbow chase");
     rmt_transmit_config_t tx_config = {
         .loop_count = 0,  // no transfer loop
     };
     while (1) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = i; j < LED_NUMBERS; j += 3) {
-                led_strip_pixels[j * 3 + 0] = 0;
-                led_strip_pixels[j * 3 + 1] = 0;
-                led_strip_pixels[j * 3 + 2] = 110;
-            }
-            // Flush RGB values to LEDs
-            ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
-                                         sizeof(led_strip_pixels), &tx_config));
-            ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-            // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
-            // memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
-            // ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
-            //                              sizeof(led_strip_pixels), &tx_config));
-            // ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-            // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
+        for (int j = i; j < LED_NUMBERS; j += 3) {
+            led_strip_pixels[j * 3 + 0] = 0;
+            led_strip_pixels[j * 3 + 1] = 0;
+            led_strip_pixels[j * 3 + 2] = 110;
         }
-        start_rgb += 60;
+        // Flush RGB values to LEDs
+        ESP_ERROR_CHECK(
+            rmt_transmit(led_chan, led_encoder, led_strip_pixels, LED_NUMBERS * 3, &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+
+        // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
+        // memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
+        // ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
+        //                              sizeof(led_strip_pixels), &tx_config));
+        // ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
     }
 }
