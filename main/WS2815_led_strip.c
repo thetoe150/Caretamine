@@ -11,7 +11,7 @@ static const char* LED_STRIP_TAG = "led_strip_encoder";
 #define RMT_LED_STRIP_RESOLUTION_HZ \
     10000000  // 10MHz resolution, 1 tick = 0.1us (led strip needs a high
               // resolution)
-#define RMT_LED_STRIP_GPIO_NUM GPIO_NUM_0
+#define RMT_LED_STRIP_GPIO_NUM GPIO_NUM_1
 
 #define CHASE_SPEED_MS 10
 
@@ -194,7 +194,6 @@ uint8_t* init_WS2815_LED_strip() {
 }
 
 void update_led_strip() {
-    ESP_LOGI(LED_STRIP_TAG, "Start LED rainbow chase");
     rmt_transmit_config_t tx_config = {
         .loop_count = 0,  // no transfer loop
     };

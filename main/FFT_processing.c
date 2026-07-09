@@ -6,9 +6,6 @@ static float magnitudes[SAMPLE_COUNT / 2];
 static const char* FFT_TAG = "FFT_processing";
 
 void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
-    ESP_ERROR_CHECK(dsps_fft2r_init_fc32(NULL, CONFIG_DSP_MAX_FFT_SIZE));
-    memset(digi_sound_buf, 0, LED_BUFFER_SIZE);
-
     int sum = 0;
     for (int i = 0; i < SAMPLE_COUNT; i++) {
         // The Type1 format stores channel info in high bits; mask them out
@@ -17,7 +14,6 @@ void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
         uint32_t val = p->type2.data;
         sum += val;
 
-        // ESP_LOGI(FFT_TAG, "read val: %.1f", (float)val);
         samples[i * 2 + 0] = (float)val - silence_offset;  // Real (Remove DC Bias)
         samples[i * 2 + 1] = 0.0f;                         // Imaginary
     }
@@ -41,7 +37,7 @@ void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
     }
 
     float freq = (float)peak_idx * SAMPLE_FREQ_HZ / SAMPLE_COUNT;
-    if (max_mag > 1000) {  // Detection threshold
+    if (max_mag > 10) {  // Detection threshold
         ESP_LOGI(FFT_TAG, "Average val: %.1d | Peak Frequency: %.1f Hz | Magnitude: %.1f",
                  sum / SAMPLE_COUNT, freq, max_mag);
     }

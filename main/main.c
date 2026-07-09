@@ -24,11 +24,10 @@ void capture_and_process_sound(void* args) {
     while (1) {
         uint32_t read_size = capture_sound(sound_samples);
 
-        // while (read_size < SAMPLE_BUFFER_SIZE) {
-        //     read_size = capture_sound(sound_samples);
-        // }
-
-        ESP_LOGI(APP_TAG, "capture sound successfully %.2d bytes", read_size);
+        while (read_size < SAMPLE_BUFFER_SIZE) {
+            ESP_LOGI(APP_TAG, "capture sound successfully %.2d bytes", read_size);
+            read_size = capture_sound(sound_samples);
+        }
 
         switch (style) {
             case STATIC:
@@ -45,6 +44,8 @@ void capture_and_process_sound(void* args) {
                 frequency_to_LED_position2(sound_samples, led_pixels, sample_silence_offset);
                 break;
         }
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -57,7 +58,8 @@ void display_led_strip(void* args) {
 void app_main(void) {
     sound_samples = init_KY037_sound_sensor(&sample_silence_offset);
     led_pixels = init_WS2815_LED_strip();
+    ESP_ERROR_CHECK(dsps_fft2r_init_fc32(NULL, CONFIG_DSP_MAX_FFT_SIZE));
 
     xTaskCreate(capture_and_process_sound, "capture_and_process_sound", 2048, NULL, 10, NULL);
-    // xTaskCreate(display_led_strip, "update_and_display_LED_strip", 2048, NULL, 10, NULL);
+    xTaskCreate(display_led_strip, "update_and_display_LED_strip", 2048, NULL, 10, NULL);
 }

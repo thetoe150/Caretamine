@@ -56,7 +56,7 @@ void setup_adc_AO() {
     adc_semaphore = xSemaphoreCreateBinary();
 
     adc_continuous_handle_cfg_t adc_config = {
-        .max_store_buf_size = 2048,
+        .max_store_buf_size = SAMPLE_BUFFER_SIZE * 2,
         .conv_frame_size = SAMPLE_BUFFER_SIZE,  // 2 bytes per sample (12-bit)
     };
     ESP_ERROR_CHECK(adc_continuous_new_handle(&adc_config, &adc_handle));
@@ -85,7 +85,6 @@ uint8_t* init_KY037_sound_sensor(float* silence_offset) {
     // setup_adc_DO();
     setup_adc_AO();
 
-    xSemaphoreTake(adc_semaphore, portMAX_DELAY);
     uint32_t ret_num = 0;
     int sum = 0;
     int count = 0;
@@ -117,8 +116,12 @@ uint32_t capture_sound(uint8_t* samples) {
     uint32_t ret_num = 0;
     // Wait for hardware to fill the buffer
     xSemaphoreTake(adc_semaphore, portMAX_DELAY);
+    memset(samples, 0, SAMPLE_BUFFER_SIZE);
+    // ESP_LOGI(
+    //     SOUND_TAG, "Return value: %s",
+    //     esp_err_to_name(adc_continuous_read(adc_handle, samples, SAMPLE_BUFFER_SIZE, &ret_num,
+    //     0)));
+    ESP_ERROR_CHECK(adc_continuous_read(adc_handle, samples, SAMPLE_BUFFER_SIZE, &ret_num, 0));
 
-    ESP_ERROR_CHECK(adc_continuous_read(adc_handle, samples, SAMPLE_BUFFER_SIZE, &ret_num, 0) ==
-                    ESP_OK);
     return ret_num;
 }
