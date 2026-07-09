@@ -5,11 +5,14 @@
 
 #include "driver/rmt_encoder.h"
 #include "driver/rmt_tx.h"
+#include "esp_check.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "global.h"
 #include "string.h"
+
+#define LED_COUNT 500
+#define LED_BUFFER_SIZE (LED_COUNT * 3)
 
 typedef struct {
     uint32_t resolution; /*!< Encoder resolution, in Hz */

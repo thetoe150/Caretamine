@@ -6,21 +6,19 @@
 
 #include "WS2815_led_strip.h"
 
-#include "esp_check.h"
-
 static const char* LED_STRIP_TAG = "led_strip_encoder";
 
 #define RMT_LED_STRIP_RESOLUTION_HZ \
     10000000  // 10MHz resolution, 1 tick = 0.1us (led strip needs a high
               // resolution)
-#define RMT_LED_STRIP_GPIO_NUM 1
+#define RMT_LED_STRIP_GPIO_NUM GPIO_NUM_0
 
 #define CHASE_SPEED_MS 10
 
-rmt_channel_handle_t led_chan = NULL;
-rmt_encoder_handle_t led_encoder = NULL;
+static rmt_channel_handle_t led_chan = NULL;
+static rmt_encoder_handle_t led_encoder = NULL;
 
-uint8_t* led_strip_pixels = NULL;
+static uint8_t* led_strip_pixels = NULL;
 
 typedef struct {
     rmt_encoder_t base;
@@ -190,7 +188,7 @@ uint8_t* init_WS2815_LED_strip() {
     ESP_LOGI(LED_STRIP_TAG, "Enable RMT TX channel");
     ESP_ERROR_CHECK(rmt_enable(led_chan));
 
-    led_strip_pixels = (uint8_t*)malloc(LED_NUMBERS * 3);
+    led_strip_pixels = (uint8_t*)malloc(LED_BUFFER_SIZE);
 
     return led_strip_pixels;
 }
@@ -200,22 +198,15 @@ void update_led_strip() {
     rmt_transmit_config_t tx_config = {
         .loop_count = 0,  // no transfer loop
     };
-    while (1) {
-        for (int j = i; j < LED_NUMBERS; j += 3) {
-            led_strip_pixels[j * 3 + 0] = 0;
-            led_strip_pixels[j * 3 + 1] = 0;
-            led_strip_pixels[j * 3 + 2] = 110;
-        }
-        // Flush RGB values to LEDs
-        ESP_ERROR_CHECK(
-            rmt_transmit(led_chan, led_encoder, led_strip_pixels, LED_NUMBERS * 3, &tx_config));
-        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+    // Flush RGB values to LEDs
+    ESP_ERROR_CHECK(
+        rmt_transmit(led_chan, led_encoder, led_strip_pixels, LED_BUFFER_SIZE, &tx_config));
+    ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
 
-        // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
-        // memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
-        // ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
-        //                              sizeof(led_strip_pixels), &tx_config));
-        // ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
-        // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
-    }
+    // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
+    // memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
+    // ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels,
+    //                              sizeof(led_strip_pixels), &tx_config));
+    // ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+    // vTaskDelay(pdMS_TO_TICKS(CHASE_SPEED_MS));
 }

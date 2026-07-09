@@ -1,11 +1,15 @@
 #include "KY037_sound_sensor.h"
 
+#define SOUND_DIGITAL_PIN GPIO_NUM_4
+#define SOUND_ANALOG_CHAN ADC_CHANNEL_4  // GPIO 5
+
 static QueueHandle_t gpio_evt_queue = NULL;
 static SemaphoreHandle_t adc_semaphore = NULL;
 static adc_continuous_handle_t adc_handle = {};
 
-uint32_t sample_size = 0;
-uint8_t* sound_samples = NULL;
+static uint8_t* sound_samples = NULL;
+
+static const char* SOUND_TAG = "sound_recorder";
 
 // ISR Handler: Sends a trigger message to the queue
 static void IRAM_ATTR DO_sound_isr_handler(void* arg) {
@@ -18,7 +22,7 @@ static void sound_event_task(void* arg) {
     uint32_t io_num;
     for (;;) {
         if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
-            ESP_LOGW(TAG, "GPIO[%" PRIu32 "] Triggered: Sound Threshold Exceeded!", io_num);
+            ESP_LOGW(SOUND_TAG, "GPIO[%" PRIu32 "] Triggered: Sound Threshold Exceeded!", io_num);
         }
     }
 }
@@ -53,8 +57,7 @@ void setup_adc_AO() {
 
     adc_continuous_handle_cfg_t adc_config = {
         .max_store_buf_size = 2048,
-        .conv_frame_size =
-            SAMPLE_SIZE * SOC_ADC_DIGI_DATA_BYTES_PER_CONV,  // 2 bytes per sample (12-bit)
+        .conv_frame_size = SAMPLE_BUFFER_SIZE,  // 2 bytes per sample (12-bit)
     };
     ESP_ERROR_CHECK(adc_continuous_new_handle(&adc_config, &adc_handle));
 
@@ -78,8 +81,8 @@ void setup_adc_AO() {
     ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
 }
 
-uint8_t* init_KY037_sound_sensor(float* silence_offset, uint32_t* size) {
-    setup_adc_DO();
+uint8_t* init_KY037_sound_sensor(float* silence_offset) {
+    // setup_adc_DO();
     setup_adc_AO();
 
     xSemaphoreTake(adc_semaphore, portMAX_DELAY);
@@ -87,14 +90,12 @@ uint8_t* init_KY037_sound_sensor(float* silence_offset, uint32_t* size) {
     int sum = 0;
     int count = 0;
 
-    *size = SAMPLE_SIZE * SOC_ADC_DIGI_RESULT_BYTES;
-    uint8_t* samples = (uint8_t*)malloc(*size);
+    uint8_t* samples = (uint8_t*)malloc(SAMPLE_BUFFER_SIZE);
     sound_samples = samples;
-    sample_size = *size;
 
-    uint32_t read_size = capture_sound(samples, *size);
+    uint32_t read_size = capture_sound(samples);
 
-    for (int i = 5; i < SAMPLE_SIZE; i++) {
+    for (int i = 5; i < SAMPLE_COUNT; i++) {
         // The Type1 format stores channel info in high bits; mask them out
         adc_digi_output_data_t* p =
             (adc_digi_output_data_t*)&samples[i * SOC_ADC_DIGI_RESULT_BYTES];
@@ -103,7 +104,7 @@ uint8_t* init_KY037_sound_sensor(float* silence_offset, uint32_t* size) {
         count++;
     }
     *silence_offset = (float)sum / count;
-    ESP_LOGI(TAG, "Calibrated silence offset: %.2f", *silence_offset);
+    ESP_LOGI(SOUND_TAG, "Calibrated silence offset: %.2f", *silence_offset);
 
     return samples;
 }
@@ -112,12 +113,12 @@ void deinit_KY037_sound_sensor() {
     free(sound_samples);
 }
 
-uint32_t capture_sound(uint8_t* samples, uint32_t size) {
+uint32_t capture_sound(uint8_t* samples) {
     uint32_t ret_num = 0;
     // Wait for hardware to fill the buffer
     xSemaphoreTake(adc_semaphore, portMAX_DELAY);
 
-    if (adc_continuous_read(adc_handle, samples, size, &ret_num, 0) == ESP_OK) {
-        return ret_num;
-    }
+    ESP_ERROR_CHECK(adc_continuous_read(adc_handle, samples, SAMPLE_BUFFER_SIZE, &ret_num, 0) ==
+                    ESP_OK);
+    return ret_num;
 }
