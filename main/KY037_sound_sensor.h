@@ -17,5 +17,7 @@
 float get_silence_offset(uint8_t* buf);
 uint8_t* init_KY037_sound_sensor(float* silence_offset);
 uint32_t capture_sound(uint8_t* samples);
+void start_sound_sensor();
+void stop_sound_sensor();
 
 #endif  // SOUND_SENSOR_H

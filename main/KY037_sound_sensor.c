@@ -52,6 +52,22 @@ void setup_adc_DO(void) {
     gpio_isr_handler_add(SOUND_DIGITAL_PIN, DO_sound_isr_handler, (void*)SOUND_DIGITAL_PIN);
 }
 
+void stop_sound_sensor() {
+    // Flush residual data out of the internal ring buffer
+    uint8_t dummy_buf[128];
+    uint32_t bytes_read = 0;
+    while (adc_continuous_read(adc_handle, dummy_buf, sizeof(dummy_buf), &bytes_read, 0) ==
+           ESP_OK) {
+        // Loop until empty
+    }
+
+    ESP_ERROR_CHECK(adc_continuous_stop(adc_handle));
+}
+
+void start_sound_sensor() {
+    ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
+}
+
 void setup_adc_AO() {
     adc_semaphore = xSemaphoreCreateBinary();
 
@@ -78,20 +94,19 @@ void setup_adc_AO() {
 
     adc_continuous_evt_cbs_t cbs = {.on_conv_done = adc_conv_done_cb};
     ESP_ERROR_CHECK(adc_continuous_register_event_callbacks(adc_handle, &cbs, 0));
-    ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
 }
 
 uint8_t* init_KY037_sound_sensor(float* silence_offset) {
     // setup_adc_DO();
     setup_adc_AO();
 
-    uint32_t ret_num = 0;
     int sum = 0;
     int count = 0;
 
     uint8_t* samples = (uint8_t*)malloc(SAMPLE_BUFFER_SIZE);
     sound_samples = samples;
 
+    ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
     uint32_t read_size = capture_sound(samples);
 
     for (int i = 5; i < SAMPLE_COUNT; i++) {
@@ -102,6 +117,7 @@ uint8_t* init_KY037_sound_sensor(float* silence_offset) {
         sum += val;
         count++;
     }
+    stop_sound_sensor();
     *silence_offset = (float)sum / count;
     ESP_LOGI(SOUND_TAG, "Calibrated silence offset: %.2f", *silence_offset);
 
