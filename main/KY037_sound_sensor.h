@@ -10,7 +10,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define SAMPLE_FREQ_HZ 20000  //  sampling rate
+#define SAMPLE_FREQ_HZ 40000  //  sampling rate
 #define SAMPLE_COUNT 4096     // Must be power of 2 for FFT
 #define SAMPLE_BUFFER_SIZE (SAMPLE_COUNT * SOC_ADC_DIGI_DATA_BYTES_PER_CONV)
 
