@@ -12,7 +12,7 @@ typedef enum {
     FREQ_AS_COLOR,
 } STYLE;
 
-STYLE style = FREQ_AS_POSITION;
+STYLE style = STATIC;
 
 static float sample_silence_offset = 0;
 static uint8_t* sound_samples = NULL;
@@ -33,7 +33,7 @@ void capture_and_process_sound(void* args) {
 
         switch (style) {
             case STATIC:
-                for (int i = 0; i < LED_COUNT; i += 3) {
+                for (int i = 0; i < LED_COUNT; i++) {
                     led_pixels[i * 3 + 0] = 0;
                     led_pixels[i * 3 + 1] = 0;
                     led_pixels[i * 3 + 2] = 110;
@@ -61,5 +61,5 @@ void app_main(void) {
     ESP_ERROR_CHECK(dsps_fft2r_init_fc32(NULL, CONFIG_DSP_MAX_FFT_SIZE));
 
     xTaskCreate(capture_and_process_sound, "capture_and_process_sound", 2048, NULL, 10, NULL);
-    // xTaskCreate(display_led_strip, "update_and_display_LED_strip", 2048, NULL, 10, NULL);
+    xTaskCreate(display_led_strip, "update_and_display_LED_strip", 2048, NULL, 10, NULL);
 }

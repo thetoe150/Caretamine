@@ -133,9 +133,9 @@ esp_err_t create_led_strip_encoder(const led_strip_encoder_config_t* config,
         .bit1 =
             {
                 .level0 = 1,
-                .duration0 = 10,  // 6 ticks * 100ns = 6 ns
+                .duration0 = 10,  // 10 ticks * 100ns = 1 us
                 .level1 = 0,
-                .duration1 = 3,  // 7 ticks * 100ns = 7 ns
+                .duration1 = 3,  // 3 ticks * 100ns = 300 ns
             },
         .flags.msb_first = 1  // WS2815 transfer bit order: G7...G0R7...R0B7...B0
     };
@@ -145,7 +145,7 @@ esp_err_t create_led_strip_encoder(const led_strip_encoder_config_t* config,
     ESP_GOTO_ON_ERROR(rmt_new_copy_encoder(&copy_encoder_config, &led_encoder->copy_encoder), err,
                       LED_STRIP_TAG, "create copy encoder failed");
 
-    uint32_t reset_ticks = 4000 / 2;  // reset code duration defaults to 280 us
+    uint32_t reset_ticks = 3000 / 2;  // reset code duration defaults to > 280 us
     led_encoder->reset_code = (rmt_symbol_word_t){
         .level0 = 0,
         .duration0 = reset_ticks,
