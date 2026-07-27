@@ -5,13 +5,10 @@ static float magnitudes[SAMPLE_COUNT / 2];
 
 static const char* FFT_TAG = "FFT_processing";
 
-void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
+float process_adc_sound(uint32_t* digi_sound_buf, float silence_offset) {
     int sum = 0;
     for (int i = 0; i < SAMPLE_COUNT; i++) {
-        // The Type1 format stores channel info in high bits; mask them out
-        adc_digi_output_data_t* p =
-            (adc_digi_output_data_t*)&digi_sound_buf[i * SOC_ADC_DIGI_RESULT_BYTES];
-        uint32_t val = p->type2.data;
+        uint32_t val = digi_sound_buf[i];
         sum += val;
 
         samples[i * 2 + 0] = (float)val - silence_offset;  // Real (Remove DC Bias)
@@ -41,6 +38,11 @@ void process_adc_sound(uint8_t* digi_sound_buf, float silence_offset) {
         ESP_LOGI(FFT_TAG, "Average val: %.1d | Peak Frequency: %.1f Hz | Magnitude: %.1f",
                  sum / SAMPLE_COUNT, freq, max_mag);
     }
+
+    ESP_LOGI(FFT_TAG, "Average val: %.1d | Peak Frequency: %.1f Hz | Magnitude: %.1f",
+             sum / SAMPLE_COUNT, freq, max_mag);
+
+    return freq;
 }
 
 /**
@@ -94,7 +96,26 @@ void led_strip_hsv2rgb(uint32_t h, uint32_t s, uint32_t v, uint32_t* r, uint32_t
     }
 }
 
-void frequency_to_LED_position1(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
+void max_frequency_as_color(uint32_t* digi_sound_buf, uint8_t* led_color_buf,
+                            float silence_offset) {
+    float max_freq = process_adc_sound(digi_sound_buf, silence_offset);
+
+    unsigned int freq_count = SAMPLE_COUNT / 2;
+    uint32_t red = 0;
+    uint32_t green = 0;
+    uint32_t blue = 0;
+    uint32_t hue = max_freq * 360 / freq_count;
+
+    led_strip_hsv2rgb(hue, 128, 128, &red, &green, &blue);
+
+    for (unsigned int i = 0; i < LED_COUNT; i++) {
+        led_color_buf[i * 3 + 0] = green;
+        led_color_buf[i * 3 + 1] = blue;
+        led_color_buf[i * 3 + 2] = red;
+    }
+}
+
+void frequency_to_LED_position1(uint32_t* digi_sound_buf, uint8_t* led_color_buf,
                                 float silence_offset) {
     process_adc_sound(digi_sound_buf, silence_offset);
     unsigned int freq_count = SAMPLE_COUNT / 2;
@@ -109,14 +130,15 @@ void frequency_to_LED_position1(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
         uint32_t led_idx = freq_idx * LED_COUNT / freq_count;
 
         led_strip_hsv2rgb(hue, 128, value, &red, &green, &blue);
+        // GRB
         led_color_buf[led_idx * 3 + 0] = green;
-        led_color_buf[led_idx * 3 + 1] = blue;
-        led_color_buf[led_idx * 3 + 2] = red;
+        led_color_buf[led_idx * 3 + 1] = red;
+        led_color_buf[led_idx * 3 + 2] = blue;
     }
 }
 
 // Used when LED_COUNT > SAMPLE_COUNT / 2
-void frequency_to_LED_position2(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
+void frequency_to_LED_position2(uint32_t* digi_sound_buf, uint8_t* led_color_buf,
                                 float silence_offset) {
     process_adc_sound(digi_sound_buf, silence_offset);
     unsigned int led_per_freq = LED_COUNT / SAMPLE_COUNT;
@@ -134,6 +156,7 @@ void frequency_to_LED_position2(uint8_t* digi_sound_buf, uint8_t* led_color_buf,
         led_strip_hsv2rgb(hue, 128, value, &red, &green, &blue);
         for (unsigned int i = 0; i < led_per_freq; i++) {
             uint32_t idx = led_idx + i;
+            // GRB
             led_color_buf[idx * 3 + 0] = green;
             led_color_buf[idx * 3 + 1] = blue;
             led_color_buf[idx * 3 + 2] = red;
